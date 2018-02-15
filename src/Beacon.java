@@ -11,7 +11,7 @@ public class Beacon extends Thread {
 	 */
 	private final EV3IRSensor irsensor1;
 	private SensorMode position;
-	private String piirto = "";
+	private String draw = "";
 	private float[] seekSample = new float[position.sampleSize()];
 	
 	public Beacon(){
@@ -45,7 +45,7 @@ public class Beacon extends Thread {
 	 */
 	@Override
 	public String toString() {
-		return piirto;
+		return draw;
 	}
 
 }
