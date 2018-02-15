@@ -5,7 +5,10 @@ import lejos.hardware.sensor.EV3IRSensor;
 import lejos.hardware.sensor.SensorMode;
 
 public class Beacon extends Thread {
-	
+	/**
+	 * Class Beacon is an extension of Thread. The point is to search beacons constantly utilizing run() method.
+	 * 
+	 */
 	private final EV3IRSensor irsensor1;
 	private SensorMode position;
 	private String piirto = "";
@@ -28,9 +31,18 @@ public class Beacon extends Thread {
 		}
 	}
 	
+	/**
+	 * SensorMode method getSensorMode()
+	 * @return returns the position of a beacon as a SensorMode variable.
+	 */
 	public SensorMode getSensorMode() {
 		return position;
 	}
+	
+	/**
+	 * toString() 
+	 * @return returns a String of the SensorMode variables to be printed.
+	 */
 	@Override
 	public String toString() {
 		return piirto;
