@@ -24,7 +24,7 @@ public class Beacon extends Thread {
 		try {
 			this.position = irsensor1.getSeekMode();
 			irsensor1.fetchSample(seekSample, 0);
-			this.piirto +=  seekSample[0];
+			this.draw = "" + seekSample[0];
 			
 			Thread.sleep(10);
 		} catch(Exception e) {
