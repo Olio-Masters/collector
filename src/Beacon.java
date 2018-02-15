@@ -12,11 +12,12 @@ public class Beacon extends Thread {
 	private final EV3IRSensor irsensor1;
 	private SensorMode position;
 	private String draw = "";
-	private float[] seekSample = new float[position.sampleSize()];
+	private float[] seekSample;
 	
 	public Beacon(){
 		this.irsensor1 = new EV3IRSensor(SensorPort.S1);
 		this.position = irsensor1.getSeekMode();
+		this.seekSample = new float[position.sampleSize()];
 	}
 	
 	@Override
