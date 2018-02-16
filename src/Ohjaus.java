@@ -19,56 +19,88 @@ public class Ohjaus {
 	private static EV3IRSensor ir1 = new EV3IRSensor(SensorPort.S4);
 
 	public static void main(String[] args) {
-		
+
 		EV3LargeRegulatedMotor largeMotora = new EV3LargeRegulatedMotor(MotorPort.A);
-		largeMotora.setSpeed(500);
 		EV3LargeRegulatedMotor largeMotorb = new EV3LargeRegulatedMotor(MotorPort.B);
+		EV3LargeRegulatedMotor largeMotorc = new EV3LargeRegulatedMotor(MotorPort.C);
+		largeMotora.setSpeed(500);
 		largeMotorb.setSpeed(500);
+		largeMotorc.setSpeed(100);
 
 		final SampleProvider sp = ir1.getSeekMode();
 
 		int beaconInfoH = 0;
 		int beaconInfoD = 0;
+		
+		largeMotorc.backward();
+		Delay.msDelay(230);
+		largeMotorc.setSpeed(0);
+		
 
 		while (Button.ESCAPE.isUp()) {
 
-			float[] sample = new float[sp.sampleSize()]; // ir sensorin näytteenhaku
+			float[] sample = new float[sp.sampleSize()]; // Sample from IR sensor
 			sp.fetchSample(sample, 0);
 
 			beaconInfoH = (int) sample[2]; // sample for direction
 			beaconInfoD = (int) sample[3]; // sample for distance
-			
-//			beaconInfoD = beaconInfoD - 7483647;
 
 			LCD.drawInt(beaconInfoH, 0, 1); // print direction on screen
-			LCD.drawInt(beaconInfoD, 0, 2); // etäisyyden anto näytölle
+			LCD.drawInt(beaconInfoD, 0, 2); // print distance on screen
 
-			Delay.msDelay(50);
-			
-			if (beaconInfoH > 1) {
-				
+			Delay.msDelay(1);
+
+			if (beaconInfoH > 2) { // when beacon is seen to the right
+
+				largeMotora.setSpeed(200);
+				largeMotorb.setSpeed(200);
+
 				largeMotora.backward();
 				largeMotorb.forward();
-				
+				Delay.msDelay(100);
+
+				LCD.clear();
+				LCD.drawString("oikealle", 0, 4);
 			}
-			
-			if (beaconInfoH < 1) {
-				
+
+			if (beaconInfoH < -2) { // when beacon is seen to the left
+
+				largeMotora.setSpeed(200);
+				largeMotorb.setSpeed(200);
+
 				largeMotorb.backward();
 				largeMotora.forward();
-				
-			} //else {
-//				largeMotora.setSpeed(0);
-//				largeMotorb.setSpeed(0);
-//				largeMotorb.forward();
-//				largeMotora.forward();
-//			}
-			
-			
+				Delay.msDelay(100);
+
+				LCD.clear();
+				LCD.drawString("vasemmalle", 0, 4);
+			}
+
+			if (beaconInfoH > -2 && beaconInfoH < 2) { // when beacon is in front of robot
+				largeMotora.setSpeed(100);
+				largeMotorb.setSpeed(100);
+
+				largeMotora.backward();
+				largeMotorb.backward();
+
+				LCD.clear();
+				LCD.drawString("eteen", 0, 4);
+
+				if (beaconInfoD < 10 && beaconInfoD > 4) {
+
+					largeMotora.setSpeed(50);
+					largeMotorb.setSpeed(50);
+					largeMotorc.setSpeed(100);
+					largeMotorc.backward();
+					Delay.msDelay(800);
+
+					 largeMotora.close();
+					 largeMotorb.close();
+					 largeMotorc.close();
+					 break;
+				}
+			}
 		}
-		
-			LCD.clear();
-			LCD.drawString("valmiina keraamaan", 0, 5);		
 	}
 }
 
