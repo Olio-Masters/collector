@@ -21,15 +21,14 @@ public class Moves extends Thread {
 	private EV3LargeRegulatedMotor largeMotora;
 	private EV3LargeRegulatedMotor largeMotorb;
 	private EV3LargeRegulatedMotor largeMotorc;
-	private float[] sample;
-	private static EV3IRSensor ir1;
+	
+	private Beacons beconi;
 	
 	public Moves() {
-		this.Moves.ir1 = new EV3IRSensor(SensorPort.S4);
 		this.largeMotora = new EV3LargeRegulatedMotor(MotorPort.A);
 		this.largeMotorb = new EV3LargeRegulatedMotor(MotorPort.B);
 		this.largeMotorc = new EV3LargeRegulatedMotor(MotorPort.C);
-		this.sample = new float[sp.sampleSize()]; // Sample from IR sensor
+		this.beconi = new Beacons();
 	}
 	
 	/**
@@ -46,17 +45,15 @@ public class Moves extends Thread {
 		largeMotorc.backward();
 		Delay.msDelay(230);
 		largeMotorc.setSpeed(0);
-		
-		// wait any buttonpress
 
 		while (Button.ESCAPE.isUp()) {
 
-			LCD.drawInt(beaconInfoH, 0, 1); // print direction on screen
-			LCD.drawInt(beaconInfoD, 0, 2); // print distance on screen
+			LCD.drawInt(Beacons.angle(), 0, 1); // print direction on screen
+			LCD.drawInt(Beacons.distance(), 0, 2); // print distance on screen
 
 			Delay.msDelay(1);
 
-			if (beaconInfoH > 2) { // when beacon is seen to the right
+			if (Beacons.angle() > 2) { // when beacon is seen to the right
 
 				largeMotora.setSpeed(200);
 				largeMotorb.setSpeed(200);
@@ -69,7 +66,7 @@ public class Moves extends Thread {
 				LCD.drawString("oikealle", 0, 4);
 			}
 
-			if (beaconInfoH < -2) { // when beacon is seen to the left
+			if (Beacons.angle() < -2) { // when beacon is seen to the left
 
 				largeMotora.setSpeed(200);
 				largeMotorb.setSpeed(200);
@@ -82,7 +79,7 @@ public class Moves extends Thread {
 				LCD.drawString("vasemmalle", 0, 4);
 			}
 
-			if (beaconInfoH > -2 && beaconInfoH < 2) { // when beacon is in front of robot
+			if (Beacons.angle() > -2 && Beacons.angle() < 2) { // when beacon is in front of robot
 				largeMotora.setSpeed(100);
 				largeMotorb.setSpeed(100);
 
@@ -92,7 +89,7 @@ public class Moves extends Thread {
 				LCD.clear();
 				LCD.drawString("eteen", 0, 4);
 
-				if (beaconInfoD < 10 && beaconInfoD > 4) {
+				if (Beacons.distance() < 10 && Beacons.distance() > 4) {
 
 					largeMotora.setSpeed(50);
 					largeMotorb.setSpeed(50);
