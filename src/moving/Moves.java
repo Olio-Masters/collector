@@ -16,28 +16,27 @@ import lejos.robotics.filter.MeanFilter;
 import lejos.utility.Delay;
 import lejos.robotics.SampleProvider;
 
-public class Moves {
+public class Moves extends Thread {
 	
 	private EV3LargeRegulatedMotor largeMotora;
 	private EV3LargeRegulatedMotor largeMotorb;
 	private EV3LargeRegulatedMotor largeMotorc;
-	private final SampleProvider sp;
-	private int beaconInfoH;
-	private int beaconInfoD;
 	private float[] sample;
 	private static EV3IRSensor ir1;
 	
 	public Moves() {
-		Moves.ir1 = new EV3IRSensor(SensorPort.S4);
+		this.Moves.ir1 = new EV3IRSensor(SensorPort.S4);
 		this.largeMotora = new EV3LargeRegulatedMotor(MotorPort.A);
 		this.largeMotorb = new EV3LargeRegulatedMotor(MotorPort.B);
 		this.largeMotorc = new EV3LargeRegulatedMotor(MotorPort.C);
-		this.sp = ir1.getSeekMode();
-		this.beaconInfoD = 0;
-		this.beaconInfoH = 0;
 		this.sample = new float[sp.sampleSize()]; // Sample from IR sensor
 	}
 	
+	/**
+	 * Don't call this method. Instead call method "start()"
+	 * 
+	 * This method runs the main functions of the robot
+	 */
 	public void run() {
 		
 		largeMotora.setSpeed(500);
@@ -48,14 +47,9 @@ public class Moves {
 		Delay.msDelay(230);
 		largeMotorc.setSpeed(0);
 		
+		// wait any buttonpress
 
 		while (Button.ESCAPE.isUp()) {
-
-			
-			sp.fetchSample(sample, 0);
-
-			beaconInfoH = (int) sample[2]; // sample for direction
-			beaconInfoD = (int) sample[3]; // sample for distance
 
 			LCD.drawInt(beaconInfoH, 0, 1); // print direction on screen
 			LCD.drawInt(beaconInfoD, 0, 2); // print distance on screen
