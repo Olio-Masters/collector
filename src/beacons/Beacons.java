@@ -1,11 +1,13 @@
 package beacons;
 
 import lejos.hardware.lcd.Font;
+import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.GraphicsLCD;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3IRSensor;
 import lejos.hardware.sensor.SensorMode;
+import lejos.robotics.SampleProvider;
 
 public class Beacons extends Thread {
 	/**
@@ -17,9 +19,9 @@ public class Beacons extends Thread {
 	private final EV3IRSensor irsensor1;
 	private String draw;
 	private float[] seekSample;
-	private final SampleProvider position;
-	private int beaconInfoH;
-	private int beaconInfoD;
+	private SampleProvider position;
+	private static int beaconInfoH;
+	private static int beaconInfoD;
 
 	public Beacons() {
 		this.irsensor1 = new EV3IRSensor(SensorPort.S4);
@@ -39,15 +41,15 @@ public class Beacons extends Thread {
 	 * this class. To use the variables, call the other methods in this class.
 	 */
 	@Override
-	public void run(Button.ESCAPE.isUp) {
+	public void run() {
 		try {
-			while(Button.ESCAPE.isUp) {
+			while(Button.ESCAPE.isUp()) {
 			this.position = irsensor1.getSeekMode();
 			
-			position.fetchSample(sample, 0);
+			position.fetchSample(seekSample, 0);
 
-			beaconInfoH = (int) sample[2]; // sample for direction
-			beaconInfoD = (int) sample[3]; // sample for distance
+			beaconInfoH = (int) seekSample[2]; // sample for direction
+			beaconInfoD = (int) seekSample[3]; // sample for distance
 			
 			this.draw = "" + seekSample[0];		//Add samples to string
 			Thread.sleep(20);
@@ -62,7 +64,7 @@ public class Beacons extends Thread {
 	 * @return returns the position of a beacon as a SensorMode variable.
 	 */
 	public SensorMode getSensorMode() {
-		return position;
+		return (SensorMode) position;
 	}
 	
 	/**
@@ -71,7 +73,7 @@ public class Beacons extends Thread {
 	 * 
 	 * @return returns int variable of the distance of the beacon.
 	 */
-	public int distance() {
+	public static int distance() {
 		return beaconInfoD;
 	}
 	
@@ -81,8 +83,8 @@ public class Beacons extends Thread {
 	 * 
 	 * @return returns int variable of the angle of the beacon.
 	 */
-	public int angle() {
-		return BeaconInfoH;
+	public static int angle() {
+		return beaconInfoH;
 	}
 
 	/**
