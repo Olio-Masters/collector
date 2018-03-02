@@ -48,12 +48,12 @@ public class Moves extends Thread {
 
 		while (Button.ESCAPE.isUp()) {
 
-			LCD.drawInt(Beacons.angle(), 0, 1); // print direction on screen
-			LCD.drawInt(Beacons.distance(), 0, 2); // print distance on screen
+			LCD.drawInt(beconi.angle(), 0, 1); // print direction on screen
+			LCD.drawInt(beconi.distance(), 0, 2); // print distance on screen
 
 			Delay.msDelay(1);
 
-			if (Beacons.angle() > 2) { // when beacon is seen to the right
+			if (beconi.angle() > 2) { // when beacon is seen to the right
 
 				largeMotora.setSpeed(200);
 				largeMotorb.setSpeed(200);
@@ -66,7 +66,7 @@ public class Moves extends Thread {
 				LCD.drawString("oikealle", 0, 4);
 			}
 
-			if (Beacons.angle() < -2) { // when beacon is seen to the left
+			if (beconi.angle() < -2) { // when beacon is seen to the left
 
 				largeMotora.setSpeed(200);
 				largeMotorb.setSpeed(200);
@@ -79,7 +79,7 @@ public class Moves extends Thread {
 				LCD.drawString("vasemmalle", 0, 4);
 			}
 
-			if (Beacons.angle() > -2 && Beacons.angle() < 2) { // when beacon is in front of robot
+			if (beconi.angle() > -2 && beconi.angle() < 2) { // when beacon is in front of robot
 				largeMotora.setSpeed(100);
 				largeMotorb.setSpeed(100);
 
@@ -89,7 +89,7 @@ public class Moves extends Thread {
 				LCD.clear();
 				LCD.drawString("eteen", 0, 4);
 
-				if (Beacons.distance() < 10 && Beacons.distance() > 4) {
+				if (beconi.distance() < 10 && beconi.distance() > 4) {
 
 					largeMotora.setSpeed(50);
 					largeMotorb.setSpeed(50);
