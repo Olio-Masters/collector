@@ -16,12 +16,12 @@ public class Beacons extends Thread {
 	 * 
 	 */
 
-	private final EV3IRSensor irsensor1;
+	private EV3IRSensor irsensor1; 
 	private String draw;
 	private float[] seekSample;
 	private SampleProvider position;
-	private static int beaconInfoH;
-	private static int beaconInfoD;
+	private int beaconInfoH;  //Staattiset pois!
+	private int beaconInfoD;
 
 	public Beacons() {
 		this.irsensor1 = new EV3IRSensor(SensorPort.S4);
@@ -73,7 +73,7 @@ public class Beacons extends Thread {
 	 * 
 	 * @return returns int variable of the distance of the beacon.
 	 */
-	public static int distance() {
+	public int distance() {
 		return beaconInfoD;
 	}
 	
@@ -83,7 +83,7 @@ public class Beacons extends Thread {
 	 * 
 	 * @return returns int variable of the angle of the beacon.
 	 */
-	public static int angle() {
+	public int angle() {
 		return beaconInfoH;
 	}
 
