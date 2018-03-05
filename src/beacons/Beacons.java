@@ -18,19 +18,18 @@ public class Beacons extends Thread {
 
 	private EV3IRSensor irsensor1; 
 	private String draw;
-	private float[] seekSample;
 	private SampleProvider position;
-	private int beaconInfoH;  //Staattiset pois!
+	private float[] seekSample;
+	private int beaconInfoH;
 	private int beaconInfoD;
 
 	public Beacons() {
 		this.irsensor1 = new EV3IRSensor(SensorPort.S4);
 		this.draw = "";
-		this.seekSample = new float[position.sampleSize()];
 		this.position = irsensor1.getSeekMode();
+		this.seekSample = new float[position.sampleSize()];
 		this.beaconInfoD = 0;
 		this.beaconInfoH = 0;
-
 	}
 
 	
