@@ -1,5 +1,3 @@
-package testivari;
-
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.port.SensorPort;
@@ -7,19 +5,19 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.Color;
 import lejos.utility.Delay;
 
-public class Main {
+public class Colour {
 
 	EV3ColorSensor cs;
-
-	public static void main(String[] args) {
-		new Main();
+	
+	public Colour() {
+		this.cs = new EV3ColorSensor(SensorPort.S1);
 	}
 
-	public Main() {
-		cs = new EV3ColorSensor(SensorPort.S1);
+	public void run() {
+		try {
 		LCD.drawString("Tahan asti toimii", 0, 2);
 		Delay.msDelay(5000);
-		while (Button.ENTER.isUp()) {	// Niin kauan kun enteri‰ ei paineta
+		while (Button.ENTER.isUp()) {	// Niin kauan kun enteri√§ ei paineta
 			switch (cs.getColorID()) {
 			case Color.BLACK:  //Jos BLACK tai WHITE niin jatkaa matkaa lastin kanssa
 				LCD.drawString("Black", 0, 2);
@@ -54,5 +52,7 @@ public class Main {
 		Delay.msDelay(2000);
 		LCD.clear();
 		cs.close();
+		} catch(Exception e) {
+		}
 	}
 }
