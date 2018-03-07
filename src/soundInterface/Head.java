@@ -1,16 +1,10 @@
 package soundInterface;
 
-import java.awt.Button;
 import java.io.*;
-
 import lejos.hardware.Audio;
 import lejos.hardware.BrickFinder;
-import lejos.hardware.Keys;
 import lejos.hardware.LED;
 import lejos.hardware.ev3.EV3;
-import lejos.hardware.lcd.LCD;
-import lejos.hardware.lcd.TextLCD;
-import lejos.utility.Delay;
 
 /**
  * Class Head is and extension of Thread.
