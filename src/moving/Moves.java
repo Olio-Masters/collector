@@ -4,37 +4,39 @@ import beacons.Beacons;
 import colour.Colour;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.MotorPort;
+import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 import lejos.utility.Delay;
 import soundInterface.Head;
 
-
-public class Moves extends Thread {
 /**
- * Class Moves is an extension of Thread. 
- * It moves the robot according to Beacons class utilizing the run() method.
+ * Class Moves is an extension of Thread. It moves the robot according to
+ * Beacons class utilizing the run() method.
  */
-	private EV3LargeRegulatedMotor oikeaA;
-	private EV3LargeRegulatedMotor largeMotorb;
-	private EV3LargeRegulatedMotor kauhaC;
+public class Moves extends Thread {
 
+	private EV3LargeRegulatedMotor motorRightA;
+	private EV3LargeRegulatedMotor motorLeftB;
+	private EV3LargeRegulatedMotor motorGrabC;
 	private Colour color;
 	private Head tunes;
 	private Beacons beacon;
 	private int mode;
 
 	/**
-	 * @param beacons
 	 * Gets information from the Beacons class and uses it in the run() method.
+	 * 
+	 * @param beacons
 	 */
 	public Moves(Beacons beacons, Head tune, Colour colors) {
-		this.oikeaA = new EV3LargeRegulatedMotor(MotorPort.A);
-		this.largeMotorb = new EV3LargeRegulatedMotor(MotorPort.B);
-		this.kauhaC = new EV3LargeRegulatedMotor(MotorPort.C);
+		this.motorRightA = new EV3LargeRegulatedMotor(MotorPort.A);
+		this.motorLeftB = new EV3LargeRegulatedMotor(MotorPort.B);
+		this.motorGrabC = new EV3LargeRegulatedMotor(MotorPort.C);
+
 		this.beacon = beacons;
-		this.tunes = tune;	
+		this.tunes = tune;
 		this.color = colors;
-		this.mode = 0;
+		this.mode = 1;
 	}
 
 	/**
@@ -45,133 +47,173 @@ public class Moves extends Thread {
 	public void run() {
 
 		try {
-			
-			oikeaA.setSpeed(500);
-			largeMotorb.setSpeed(500);
-			kauhaC.setSpeed(100);
+			motorRightA.setSpeed(500);
+			motorLeftB.setSpeed(500);
+			motorGrabC.setSpeed(100);
 
-			kauhaC.backward(); // Initialize the robot grab and set it to the right altitude.
+			motorGrabC.backward(); // Initialize the robot grab and set it to the right altitude.
 			Delay.msDelay(280);
-			kauhaC.setSpeed(0);
-			
+			motorGrabC.setSpeed(0);
+
 			color.colorturn();
 
-			while (mode == 0) {
+			while (mode == 1) {
 				searchBeacon();
 			}
-			
-			while (mode == 1) {
+
+			while (mode == 2) {
 				dropCargo();
 			}
-			if (mode == 2) {
+			if (mode == 3) {
 				endGreeting();
 			}
-			
+
 		} catch (Exception e) {
 		}
 	}
-	
-	public void endGreeting() {
-		
-			LCD.clear();
-			LCD.drawString("Tavara palautettu", 0, 1);
-			LCD.drawString("Kiitos etta valitsit KR2000", 0, 2);
-			LCD.drawString("Tervetuloa uudelleen!", 0, 3);
-			LCD.drawString("", 0, 4);
-			LCD.drawString("Terveisin:", 0, 5);
-			LCD.drawString("-- Olio Masters --", 0, 6);
-			Delay.msDelay(5000);
-	}
-	public void searchBeacon(){
+
+	/**
+	 * Mode 1 of the robot. It searches the beacons and acts upon finding any. When
+	 * it finds and closes in on the target, it grabs the target up in its grabbing
+	 * device.
+	 */
+	public void searchBeacon() {
+
+		while (Button.ESCAPE.isDown()) {
+			break;
+		}
+
 		LCD.drawInt(beacon.angle(), 0, 1); // print direction on screen.
 		LCD.drawInt(beacon.distance(), 0, 2); // print distance on screen.
 		LCD.drawInt(color.colorturn(), 0, 3);
 
 		Delay.msDelay(1);
 
+		while (beacon.angle() == 0 && beacon.distance() > 90) { // AGGRESSIVE SEARCH MODE
+
+			LCD.drawInt(beacon.angle(), 0, 1); // print direction on screen.
+			LCD.drawInt(beacon.distance(), 0, 2); // print distance on screen.
+
+			if (Button.ESCAPE.isDown()) {
+				break;
+			}
+
+			motorRightA.setSpeed(300);
+			motorLeftB.setSpeed(300);
+
+			motorRightA.backward();
+			motorLeftB.forward();
+
+			Delay.msDelay(500);
+
+			motorRightA.backward();
+			motorLeftB.backward();
+
+			Delay.msDelay(300);
+		}
+
 		if (beacon.angle() > 2) { // when beacon is seen to the right
 
-			oikeaA.setSpeed(100);
-			largeMotorb.setSpeed(100);
+			motorRightA.setSpeed(100);
+			motorLeftB.setSpeed(100);
 
-			oikeaA.backward();
-			largeMotorb.forward();
+			motorRightA.backward();
+			motorLeftB.forward();
 			tunes.search();
-			
-			LCD.clear();
-			LCD.drawString("oikealle", 0, 4);
-
 		}
 
 		if (beacon.angle() < -2) { // when beacon is seen to the left
 
-			oikeaA.setSpeed(100);
-			largeMotorb.setSpeed(100);
+			motorRightA.setSpeed(100);
+			motorLeftB.setSpeed(100);
 
-			largeMotorb.backward();
-			oikeaA.forward();
-			tunes.search();
-
-			LCD.clear();
-			LCD.drawString("vasemmalle", 0, 4);
+			motorLeftB.backward();
+			motorRightA.forward();
+			tunes.search(); // play search tune
 		}
 
 		if (beacon.angle() > -2 && beacon.angle() < 2) { // when beacon is in front of robot
-			oikeaA.setSpeed(100);
-			largeMotorb.setSpeed(100);
+			motorRightA.setSpeed(100);
+			motorLeftB.setSpeed(100);
 
-			oikeaA.backward();
-			largeMotorb.backward();
+			motorRightA.backward();
+			motorLeftB.backward();
 			tunes.target();
-
-			LCD.drawString("eteen", 0, 4);
 
 			if (beacon.distance() < 18 && beacon.distance() > 4) { // when beacon is near the sensor
 
-				oikeaA.setSpeed(10);
-				largeMotorb.setSpeed(10);
-				kauhaC.setSpeed(100);
-				kauhaC.backward();		// grab the beacon
-				tunes.pickup();				// play the pickup tune
-				Delay.msDelay(400);
-				
-				kauhaC.setSpeed(0);
-				tunes.success();			// play the success tune
-				mode++;
+				motorRightA.setSpeed(10);
+				motorLeftB.setSpeed(10);
+				motorGrabC.setSpeed(100);
+
+				motorGrabC.backward(); // grab the beacon
+				tunes.pickup(); // play pickup tune
+				Delay.msDelay(200);
+
+				motorGrabC.setSpeed(0);
+				tunes.success(); // play the success tune
+				LCD.clear();
+				mode++; // changes to mode 2 (dropCargo)
 			}
 		}
 	}
-	public void dropCargo() {
-		LCD.clear();
-		
-		oikeaA.setSpeed(400);
-		largeMotorb.setSpeed(400);
-		
-		largeMotorb.backward();
-		oikeaA.backward();
-		
+
+	/**
+	 * Mode 2 of the robot. Main purpose is to get out of the zone and drop cargo
+	 * out.
+	 */
+	public void dropCargo() { // mode 2
+
+		motorRightA.setSpeed(200);
+		motorLeftB.setSpeed(200);
+
+		motorLeftB.backward();
+		motorRightA.backward();
+
+		while (Button.ESCAPE.isDown()) {
+			break;
+		}
+
 		if (color.colorturn() == 3) {
 
 			LCD.drawString("Lasketaan kuorma", 0, 5);
-			oikeaA.setSpeed(0);
-			largeMotorb.setSpeed(0);
-			kauhaC.setSpeed(200);
-			kauhaC.forward();
-			
+			motorRightA.setSpeed(0);
+			motorLeftB.setSpeed(0);
+			motorGrabC.setSpeed(200);
+			motorGrabC.forward();
+
 			Delay.msDelay(300);
-			
-			oikeaA.setSpeed(300);
-			largeMotorb.setSpeed(300);
-			oikeaA.forward();
-			largeMotorb.forward();
-			
+
+			motorRightA.setSpeed(300);
+			motorLeftB.setSpeed(300);
+			motorRightA.forward();
+			motorLeftB.forward();
+
 			Delay.msDelay(2000);
-			
-			oikeaA.close();
-			largeMotorb.close();
-			kauhaC.close();
-			
-			mode = 2;
+
+			motorRightA.close();
+			motorLeftB.close();
+			motorGrabC.close();
+			LCD.clear();
+			mode++; // Changes to mode 3 (endGreeting)
 		}
+	}
+
+	/**
+	 * Mode 3 of the robot. Does end greetings and ends the program
+	 */
+	public void endGreeting() { // mode 3
+
+		while (Button.ESCAPE.isDown()) {
+			break;
+		}
+		LCD.clear();
+		LCD.drawString("Tavara palautettu", 0, 1);
+		LCD.drawString("Kiitos etta valitsit KR2000", 0, 2);
+		LCD.drawString("Tervetuloa uudelleen!", 0, 3);
+		LCD.drawString("", 0, 4);
+		LCD.drawString("Terveisin:", 0, 5);
+		LCD.drawString("-- Olio Masters --", 0, 6);
+		Delay.msDelay(5000);
 	}
 }

@@ -1,6 +1,9 @@
 package beacons;
 
+import lejos.hardware.lcd.Font;
 import lejos.hardware.Button;
+import lejos.hardware.ev3.LocalEV3;
+import lejos.hardware.lcd.GraphicsLCD;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3IRSensor;
 import lejos.hardware.sensor.SensorMode;
@@ -22,11 +25,11 @@ public class Beacons extends Thread {
 
 	public Beacons() {
 		this.irsensor1 = new EV3IRSensor(SensorPort.S4);
-		this.draw = "";	// Empty String for the adding of samples
+		this.draw = "";
 		this.position = irsensor1.getSeekMode();
-		this.seekSample = new float[position.sampleSize()];	// Array to store samples in temporarely.
-		this.beaconInfoD = 0;	// sample for distance
-		this.beaconInfoH = 0;	// sample for direction
+		this.seekSample = new float[position.sampleSize()];
+		this.beaconInfoD = 0;
+		this.beaconInfoH = 0;
 	}
 
 	

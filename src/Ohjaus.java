@@ -1,17 +1,25 @@
 import beacons.Beacons;
 import colour.Colour;
+import lejos.hardware.Button;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.sensor.EV3IRSensor;
+import lejos.hardware.sensor.SensorModes;
+import lejos.hardware.port.MotorPort;
+import lejos.hardware.port.Port;
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.LCD;
+import lejos.robotics.SampleProvider;
+import lejos.robotics.filter.MeanFilter;
+import lejos.utility.Delay;
 import moving.Moves;
 import soundInterface.Head;
 
-/**
- * The main class of the robot. This class only starts the other runnable classes.
- * @author C0mmunist1
- *
- */
-
 public class Ohjaus {
-
+	
+/**
+ * 
+ */
 	public static void main(String[] args) {
 
 		LCD.clear();
