@@ -1,9 +1,6 @@
 package beacons;
 
-import lejos.hardware.lcd.Font;
 import lejos.hardware.Button;
-import lejos.hardware.ev3.LocalEV3;
-import lejos.hardware.lcd.GraphicsLCD;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3IRSensor;
 import lejos.hardware.sensor.SensorMode;
@@ -16,20 +13,20 @@ public class Beacons extends Thread {
 	 * 
 	 */
 
-	private EV3IRSensor irsensor1; 
+	private EV3IRSensor infraredSensor; 
 	private String draw;
 	private SampleProvider position;
 	private float[] seekSample;
-	private int beaconInfoH;
-	private int beaconInfoD;
+	private int beaconAngle;
+	private int beaconDistance;
 
 	public Beacons() {
-		this.irsensor1 = new EV3IRSensor(SensorPort.S4);
+		this.infraredSensor = new EV3IRSensor(SensorPort.S4);
 		this.draw = "";
-		this.position = irsensor1.getSeekMode();
+		this.position = infraredSensor.getSeekMode();
 		this.seekSample = new float[position.sampleSize()];
-		this.beaconInfoD = 0;
-		this.beaconInfoH = 0;
+		this.beaconDistance = 0;
+		this.beaconAngle = 0;
 	}
 
 	
@@ -43,12 +40,12 @@ public class Beacons extends Thread {
 	public void run() {
 		try {
 			while(Button.ESCAPE.isUp()) {
-			this.position = irsensor1.getSeekMode();
+			this.position = infraredSensor.getSeekMode();
 			
 			position.fetchSample(seekSample, 0);
 
-			beaconInfoH = (int) seekSample[2]; // sample for direction
-			beaconInfoD = (int) seekSample[3]; // sample for distance
+			beaconAngle = (int) seekSample[2]; // sample for beacon angle
+			beaconDistance = (int) seekSample[3]; // sample for beacon distance
 			
 			this.draw = "" + seekSample[0];		//Add samples to string
 			Thread.sleep(20);
@@ -73,7 +70,7 @@ public class Beacons extends Thread {
 	 * @return returns int variable of the distance of the beacon.
 	 */
 	public int distance() {
-		return beaconInfoD;
+		return beaconDistance;
 	}
 	
 	/**
@@ -83,7 +80,7 @@ public class Beacons extends Thread {
 	 * @return returns int variable of the angle of the beacon.
 	 */
 	public int angle() {
-		return beaconInfoH;
+		return beaconAngle;
 	}
 
 	/**

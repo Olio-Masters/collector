@@ -9,15 +9,14 @@ import lejos.utility.Delay;
 
 public class Colour extends Thread {
 
-	private EV3ColorSensor cs;
+	private EV3ColorSensor colorSensor;
 	private int color;
 	
 	/**
 	 * Colors sets things up: Color sensor to port S1 in leJos EV3
 	 */
-	
 	public Colour() {
-		this.cs = new EV3ColorSensor(SensorPort.S1);
+		this.colorSensor = new EV3ColorSensor(SensorPort.S1);
 		this.color = 10;
 	}
 	
@@ -25,40 +24,27 @@ public class Colour extends Thread {
 	 * Run includes all the cases for different colors. The color sensor has trouble with black and white, 
 	 * so more saturated colors were chosen for the final code.
 	 */
-
 	@Override
 	public void run() {
 		try {
 			while (Button.ESCAPE.isUp()) {
-				switch (cs.getColorID()) {
+				switch (colorSensor.getColorID()) {
 				case Color.BLACK:
-//					LCD.drawString("Black", 0, 2);
-//					Delay.msDelay(200);
 					color = 0;
 					break;
 				case Color.WHITE:
-//					LCD.drawString("White", 0, 2);
-//					Delay.msDelay(200);
 					color = 0;
 					break;
 				case Color.GREEN:
-//					LCD.drawString("Green", 0, 2);
-//					Delay.msDelay(200);
 					color = 1;
 					break;
 				case Color.BLUE:
-//					LCD.drawString("Blue", 0, 2);
-//					Delay.msDelay(200);
 					color = 2;
 					break;
 				case Color.RED:
-//					LCD.drawString("Red", 0, 2);
-//					Delay.msDelay(200);
 					color = 3;
 					break;
 				default:
-//					LCD.drawString("Undefined", 0, 2);
-//					Delay.msDelay(200);
 					color = 0;
 					break;
 				}
@@ -68,7 +54,7 @@ public class Colour extends Thread {
 				Thread.sleep(20);
 			}
 			LCD.clear();
-			cs.close();
+			colorSensor.close();
 		}catch(Exception e) {
 		}
 	}
